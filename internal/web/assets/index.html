@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><p class="eyebrow">湿地生态修复现场</p><h1>苗木投放核验工作台</h1></div>
+    <div id="health" class="health">服务检查中</div>
+  </header>
+  <main>
+    <section class="hero">
+      <div><span class="tag">单一可追溯流程</span><h2>让每一株进入湿地的苗木都有证据</h2><p>从来源交接、驯化观察、风险整改到独立复核，所有事实均进入不可跳过的状态链。</p></div>
+      <div class="progress"><div><b>01</b><span>建档</span></div><div><b>02</b><span>证据</span></div><div><b>03</b><span>驯化</span></div><div><b>04</b><span>复核</span></div><div><b>05</b><span>凭据</span></div></div>
+    </section>
+
+    <div id="notice" class="notice" hidden></div>
+    <section class="layout">
+      <aside class="panel batches"><div class="section-title"><h2>投放批次</h2><button id="refresh" class="quiet">刷新</button></div><div id="batch-list" class="batch-list"></div></aside>
+      <div class="workspace">
+        <nav class="tabs" aria-label="工作阶段">
+          <button data-tab="create" class="active">批次向导</button><button data-tab="evidence">来源证据</button><button data-tab="plan">驯化方案</button><button data-tab="observe">观察记录</button><button data-tab="issues">整改队列</button><button data-tab="review">复核冻结</button>
+        </nav>
+
+        <section id="tab-create" class="panel tab active">
+          <div class="section-title"><div><p class="eyebrow">draft</p><h2>新建投放批次</h2></div><span class="hint">批次编号与物种配额不可重复</span></div>
+          <form id="create-form" class="form-grid">
+            <label>批次编号<input name="batchCode" value="WET-2026-001" required></label><label>目标地块<input name="siteCode" value="SITE-A01" required></label>
+            <label>计划投放日<input name="plannedReleaseDate" type="date" required></label><label>负责人<input name="owner" value="苗圃交接员" required></label>
+            <label>物种代码<input name="speciesCode" value="PHS-AUS" required></label><label>计划数量<input name="quantity" type="number" min="1" value="120" required></label>
+            <label>操作人<input name="actor" value="苗圃交接员" required></label><div class="form-action"><button type="submit">创建并选中批次</button></div>
+          </form>
+        </section>
+
+        <section id="tab-evidence" class="panel tab">
+          <div class="section-title"><div><p class="eyebrow">evidence_ready</p><h2>苗源与运输交接证据</h2></div><span class="hint">许可、检疫、交接和附件缺一不可</span></div>
+          <form id="evidence-form" class="form-grid">
+            <label>物种代码<input name="speciesCode" required></label><label>繁育地点<input name="nurseryOrigin" required></label><label>采集许可摘要<input name="permitDigest" required></label>
+            <label>检疫结论<select name="quarantineResult"><option value="passed">通过</option><option value="failed">不通过</option></select></label><label>交接时间<input name="handoverAt" type="datetime-local" required></label><label>证据引用（逗号分隔）<input name="evidenceRefs" required></label>
+            <label>操作人<input name="actor" value="苗圃交接员" required></label><div class="form-action"><button type="submit">保存证据</button></div>
+          </form>
+        </section>
+
+        <section id="tab-plan" class="panel tab">
+          <div class="section-title"><div><p class="eyebrow">acclimating</p><h2>驯化方案配置</h2></div><span class="hint">全物种配置完成后自动锁定</span></div>
+          <form id="plan-form" class="form-grid compact">
+            <label>物种代码<input name="speciesCode" required></label><label>驯化分区<input name="zoneCode" value="ZONE-A01" required></label><label>周期（天）<input name="durationDays" type="number" min="1" value="1"></label><label>最低抽样数<input name="minimumSampleCount" type="number" min="1" value="10"></label>
+            <label>盐度下限<input name="salinityMin" type="number" step="0.1" value="5"></label><label>盐度上限<input name="salinityMax" type="number" step="0.1" value="20"></label><label>水位下限<input name="waterMin" type="number" step="0.1" value="0.1"></label><label>水位上限<input name="waterMax" type="number" step="0.1" value="1.5"></label>
+            <label>最低成活率<input name="minimumSurvivalRate" type="number" min="0" max="1" step="0.01" value="0.8"></label><label>最高病害率<input name="maximumDiseaseRate" type="number" min="0" max="1" step="0.01" value="0.1"></label><label>操作人<input name="actor" value="生态技术员"></label><div class="form-action"><button type="submit">保存方案</button></div>
+          </form>
+        </section>
+
+        <section id="tab-observe" class="panel tab">
+          <div class="section-title"><div><p class="eyebrow">连续观察窗口</p><h2>驯化观察记录</h2></div><span class="hint">同一物种、分区和日期不可重复</span></div>
+          <form id="observe-form" class="form-grid compact">
+            <label>物种代码<input name="speciesCode" required></label><label>方案版本<input name="planRevision" type="number" value="1"></label><label>分区<input name="zoneCode" value="ZONE-A01"></label><label>观察日期<input name="observedOn" type="date" required></label>
+            <label>抽样株数<input name="sampledCount" type="number" value="20"></label><label>存活株数<input name="survivingCount" type="number" value="19"></label><label>病害株数<input name="diseasedCount" type="number" value="0"></label><label>盐度<input name="salinity" type="number" step="0.1" value="10"></label>
+            <label>水位<input name="waterLevel" type="number" step="0.1" value="0.8"></label><label>现场备注<input name="notes" value="长势与叶色正常"></label><label>提交人<input name="actor" value="生态技术员"></label><div class="form-action"><button type="submit">提交并计算适生性</button></div>
+          </form>
+          <div id="assessment" class="cards"></div>
+          <div id="trend" class="cards"></div>
+        </section>
+
+        <section id="tab-issues" class="panel tab"><div class="section-title"><div><p class="eyebrow">needs_remediation</p><h2>风险与整改队列</h2></div><span class="hint">提交措施并关联满足条件的复验观察</span></div><div id="queue-summary" class="summary"></div><div id="issue-list" class="cards"></div></section>
+
+        <section id="tab-review" class="panel tab">
+          <div class="section-title"><div><p class="eyebrow">review_ready → approved</p><h2>独立复核与冻结</h2></div><span class="hint">复核人不得是最近观察提交人</span></div>
+          <div id="review-summary" class="summary"></div>
+          <form id="review-form" class="form-grid"><label>复核人<input name="actor" value="项目复核负责人" required></label><label>决定<select name="decision"><option value="approve">批准并冻结</option><option value="return">退回驯化</option></select></label><label class="wide">退回原因<input name="reason" placeholder="选择退回时必填"></label><div class="form-action"><button type="submit">提交复核决定</button></div></form>
+          <div id="credential" class="credential-card" hidden></div>
+          <h3>审计轨迹</h3><ol id="audit" class="timeline"></ol>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
